@@ -11,6 +11,7 @@
 
 #place-navbar {
     width: 86%;
+    margin-bottom: 4px;
     background-color: white;
     font-family: Arial;
     overflow: hidden;
@@ -52,6 +53,10 @@
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+}
+
+.Place-Experiment-updates-changer button{
+    float: left;
 }
 
 a.active {

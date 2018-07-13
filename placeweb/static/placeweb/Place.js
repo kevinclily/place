@@ -9187,8 +9187,7 @@ var _PALab$place$Place_Experiment$encode = function (model) {
 				_0: {
 					ctor: '_Tuple2',
 					_0: 'updates',
-					_1: _elm_lang$core$Json_Encode$int(
-						A2(_PALab$place$Place_Experiment$intDefault, '1', model.updates))
+					_1: _elm_lang$core$Json_Encode$int(model.updates)
 				},
 				_1: {
 					ctor: '::',
@@ -9220,7 +9219,6 @@ var _PALab$place$Place_Experiment$encode = function (model) {
 		});
 };
 var _PALab$place$Place_Experiment$experimentShowData = function (model) {
-	var updates = A2(_PALab$place$Place_Experiment$intDefault, '1', model.updates);
 	var makeHeading = F2(
 		function (num, name) {
 			return A2(
@@ -9319,7 +9317,7 @@ var _PALab$place$Place_Experiment$experimentShowData = function (model) {
 						_1: {ctor: '[]'}
 					},
 					function () {
-						var _p1 = updates;
+						var _p1 = model.updates;
 						switch (_p1) {
 							case 1:
 								return {
@@ -9782,7 +9780,7 @@ var _PALab$place$Place_Experiment$experimentShowData = function (model) {
 															{
 																ctor: '::',
 																_0: _elm_lang$html$Html$text(
-																	_elm_lang$core$Basics$toString(updates - 2)),
+																	_elm_lang$core$Basics$toString(model.updates - 2)),
 																_1: {ctor: '[]'}
 															}),
 														_1: A2(
@@ -9806,7 +9804,7 @@ var _PALab$place$Place_Experiment$experimentShowData = function (model) {
 																{
 																	ctor: '::',
 																	_0: _elm_lang$html$Html$text(
-																		_elm_lang$core$Basics$toString(updates - 1)),
+																		_elm_lang$core$Basics$toString(model.updates - 1)),
 																	_1: {ctor: '[]'}
 																}),
 															_1: A2(
@@ -9915,7 +9913,7 @@ var _PALab$place$Place_Experiment$Model = F7(
 var _PALab$place$Place_Experiment$init = A7(
 	_PALab$place$Place_Experiment$Model,
 	_PALab$place$Status$Unknown,
-	'1',
+	1,
 	{ctor: '[]'},
 	'Unnamed Experiment',
 	'',
@@ -9925,7 +9923,7 @@ var _PALab$place$Place_Experiment$decode = A8(
 	_elm_lang$core$Json_Decode$map7,
 	_PALab$place$Place_Experiment$Model,
 	A2(_elm_lang$core$Json_Decode$field, 'status', _PALab$place$Status$decode),
-	A2(_elm_lang$core$Json_Decode$field, 'updates', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'updates', _elm_lang$core$Json_Decode$int),
 	A2(
 		_elm_lang$core$Json_Decode$field,
 		'plugins',
@@ -9950,7 +9948,9 @@ var _PALab$place$Place_Experiment$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{updates: _p4._0}),
+						{
+							updates: A2(_elm_lang$core$Basics$max, 1, model.updates + _p4._0)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'UpdatePlugins':
@@ -10104,76 +10104,73 @@ var _PALab$place$Place_Experiment$ChangeComments = function (a) {
 var _PALab$place$Place_Experiment$ChangeTitle = function (a) {
 	return {ctor: 'ChangeTitle', _0: a};
 };
-var _PALab$place$Place_Experiment$inputsView = function (model) {
+var _PALab$place$Place_Experiment$titleAndCommentsView = function (model) {
 	return A2(
-		_elm_lang$html$Html$p,
-		{ctor: '[]'},
+		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text('Title: '),
+			_0: _elm_lang$html$Html_Attributes$id('Place-Experiment-titleAndCommentsView'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Title: '),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$value(model.title),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(_PALab$place$Place_Experiment$ChangeTitle),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$input,
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$value(model.title),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onInput(_PALab$place$Place_Experiment$ChangeTitle),
-							_1: {ctor: '[]'}
-						}
-					},
-					{ctor: '[]'}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$br,
-						{ctor: '[]'},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Comments:'),
+						_0: _elm_lang$html$Html$text('Comments: '),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$br,
-								{ctor: '[]'},
-								{ctor: '[]'}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$textarea,
-									{
+								_elm_lang$html$Html$textarea,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$id('commentsBox'),
+									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$id('commentsBox'),
+										_0: _elm_lang$html$Html_Attributes$rows(3),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$rows(3),
+											_0: _elm_lang$html$Html_Attributes$value(model.comments),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$value(model.comments),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onInput(_PALab$place$Place_Experiment$ChangeComments),
-													_1: {ctor: '[]'}
-												}
+												_0: _elm_lang$html$Html_Events$onInput(_PALab$place$Place_Experiment$ChangeComments),
+												_1: {ctor: '[]'}
 											}
 										}
-									},
-									{ctor: '[]'}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$br,
-										{ctor: '[]'},
-										{ctor: '[]'}),
-									_1: {ctor: '[]'}
-								}
-							}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
 						}
-					}
-				}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };
@@ -10183,178 +10180,171 @@ var _PALab$place$Place_Experiment$UpdatePlugins = function (a) {
 var _PALab$place$Place_Experiment$ChangeUpdates = function (a) {
 	return {ctor: 'ChangeUpdates', _0: a};
 };
-var _PALab$place$Place_Experiment$startExperimentView = function (model) {
+var _PALab$place$Place_Experiment$updateIncrementerView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: function () {
-					var _p11 = model.status;
-					switch (_p11.ctor) {
-						case 'Ready':
-							return A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('start-button'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_PALab$place$Place_Experiment$Post),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Start'),
-									_1: {ctor: '[]'}
-								});
-						case 'Running':
-							var _p12 = _p11._0;
-							return A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('start-button-inactive'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(
-										_elm_lang$core$Basics$toString(
-											_elm_lang$core$Basics$toFloat(_p12.currentUpdate) / _elm_lang$core$Basics$toFloat(_p12.totalUpdates))),
-									_1: {ctor: '[]'}
-								});
-						default:
-							return A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('start-button-inactive'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Please wait'),
-									_1: {ctor: '[]'}
-								});
-					}
-				}(),
-				_1: {
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('Place-Experiment-updatesIncrementerView'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$id('updates-p'),
-							_1: {ctor: '[]'}
-						},
-						{
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(model.updates),
+							' updates')),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('Place-Experiment-updates-changer'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_PALab$place$Place_Experiment$ChangeUpdates(-10)),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('-10'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$span,
+								_elm_lang$html$Html$button,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('update-text'),
+									_0: _elm_lang$html$Html_Events$onClick(
+										_PALab$place$Place_Experiment$ChangeUpdates(-1)),
 									_1: {ctor: '[]'}
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Updates: '),
+									_0: _elm_lang$html$Html$text('-1'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$input,
+									_elm_lang$html$Html$button,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$id('updateNumber'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$value(model.updates),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onInput(_PALab$place$Place_Experiment$ChangeUpdates),
-												_1: {ctor: '[]'}
-											}
-										}
+										_0: _elm_lang$html$Html_Events$onClick(
+											_PALab$place$Place_Experiment$ChangeUpdates(1)),
+										_1: {ctor: '[]'}
 									},
-									{ctor: '[]'}),
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('+1'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												_PALab$place$Place_Experiment$ChangeUpdates(10)),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('+10'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _PALab$place$Place_Experiment$startExperimentView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('Place-Experiment-startExperimentView'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _PALab$place$Place_Experiment$updateIncrementerView(model),
+			_1: {
+				ctor: '::',
+				_0: _PALab$place$Place_Experiment$titleAndCommentsView(model),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$id('start-button'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_PALab$place$Place_Experiment$Post),
 								_1: {ctor: '[]'}
 							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Start'),
+							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}
-			},
-			function () {
-				var _p13 = _elm_lang$core$String$toInt(model.updates);
-				if (_p13.ctor === 'Ok') {
-					return {ctor: '[]'};
-				} else {
-					return {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$br,
-							{ctor: '[]'},
-							{ctor: '[]'}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('error-text'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(_p13._0),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					};
-				}
-			}()));
+			}
+		});
 };
 var _PALab$place$Place_Experiment$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		function () {
-			var _p14 = model.status;
-			switch (_p14.ctor) {
-				case 'Ready':
-					return {
-						ctor: '::',
-						_0: _PALab$place$Place_Experiment$startExperimentView(model),
-						_1: {
-							ctor: '::',
-							_0: _PALab$place$Place_Experiment$inputsView(model),
-							_1: {ctor: '[]'}
-						}
-					};
-				case 'Running':
-					return {
-						ctor: '::',
-						_0: _PALab$place$Place_Experiment$liveplot(model),
-						_1: {
-							ctor: '::',
-							_0: _PALab$place$Place_Experiment$statusView(model),
-							_1: {ctor: '[]'}
-						}
-					};
-				default:
-					return {
+	var _p11 = model.status;
+	switch (_p11.ctor) {
+		case 'Ready':
+			return _PALab$place$Place_Experiment$startExperimentView(model);
+		case 'Running':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _PALab$place$Place_Experiment$liveplot(model),
+					_1: {
 						ctor: '::',
 						_0: _PALab$place$Place_Experiment$statusView(model),
 						_1: {ctor: '[]'}
-					};
-			}
-		}());
+					}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _PALab$place$Place_Experiment$statusView(model),
+					_1: {ctor: '[]'}
+				});
+	}
 };
 
 var _PALab$place$Place_History$update = F2(
@@ -10503,7 +10493,7 @@ var _PALab$place$Place$main = _elm_lang$html$Html$programWithFlags(
 				{
 					experiment: _PALab$place$Place_Experiment$init,
 					history: _PALab$place$Place_History$init,
-					currentView: _PALab$place$Place$History,
+					currentView: _PALab$place$Place$Experiment,
 					version: A3(_PALab$place$Place$Version, 0, 0, 0)
 				});
 		},

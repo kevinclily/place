@@ -19,12 +19,12 @@ port pluginProgress : ( String, Json.Encode.Value ) -> Cmd msg
 
 init : Model
 init =
-    Model Status.Unknown "1" [] "Unnamed Experiment" "" 0 ""
+    Model Status.Unknown 1 [] "Unnamed Experiment" "" 0 ""
 
 
 type alias Model =
     { status : Status
-    , updates : String
+    , updates : Int
     , plugins : List Plugin.Model
     , title : String
     , comments : String
@@ -36,7 +36,7 @@ type alias Model =
 
 
 type Msg
-    = ChangeUpdates String
+    = ChangeUpdates Int
     | UpdatePlugins Json.Encode.Value
     | ChangeTitle String
     | ChangeComments String
@@ -51,8 +51,8 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeUpdates newValue ->
-            ( { model | updates = newValue }, Cmd.none )
+        ChangeUpdates change ->
+            ( { model | updates = max 1 (model.updates + change) }, Cmd.none )
 
         UpdatePlugins jsonValue ->
             case Json.Decode.decodeValue (Json.Decode.list Plugin.decode) jsonValue of
@@ -148,57 +148,64 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Html.div [] <|
-        case model.status of
-            Status.Ready ->
-                [ startExperimentView model, inputsView model ]
+    case model.status of
+        Status.Ready ->
+            startExperimentView model
 
-            Status.Running percentage ->
+        Status.Running percentage ->
+            Html.div [] <|
                 [ liveplot model, statusView model ]
 
-            --    ++ [ Html.p [] [ Html.text model.rawJson ] ]
-            otherwise ->
+        --    ++ [ Html.p [] [ Html.text model.rawJson ] ]
+        otherwise ->
+            Html.div [] <|
                 [ statusView model ]
+
+
+updateIncrementerView : Model -> Html Msg
+updateIncrementerView model =
+    Html.div [ Html.Attributes.id "Place-Experiment-updatesIncrementerView" ]
+        [ Html.p [] [ Html.text <| (toString model.updates) ++ " updates" ]
+        , Html.div [ Html.Attributes.class "Place-Experiment-updates-changer" ]
+            [ Html.button [ Html.Events.onClick <| ChangeUpdates -10 ] [ Html.text "-10" ]
+            , Html.button [ Html.Events.onClick <| ChangeUpdates -1 ] [ Html.text "-1" ]
+            , Html.button [ Html.Events.onClick <| ChangeUpdates 1 ] [ Html.text "+1" ]
+            , Html.button [ Html.Events.onClick <| ChangeUpdates 10 ] [ Html.text "+10" ]
+            ]
+        ]
 
 
 startExperimentView : Model -> Html Msg
 startExperimentView model =
-    Html.div [] <|
-        [ (case model.status of
-            Status.Ready ->
-                Html.button
-                    [ Html.Attributes.id "start-button"
-                    , Html.Events.onClick Post
-                    ]
-                    [ Html.text "Start" ]
+    Html.div [ Html.Attributes.id "Place-Experiment-startExperimentView" ]
+        [ updateIncrementerView model
+        , titleAndCommentsView model
+        , Html.button
+            [ Html.Attributes.id "start-button"
+            , Html.Events.onClick Post
+            ]
+            [ Html.text "Start" ]
+        ]
 
-            Status.Running progress ->
-                Html.button
-                    [ Html.Attributes.id "start-button-inactive" ]
-                    [ Html.text <| toString (toFloat progress.currentUpdate / toFloat progress.totalUpdates) ]
 
-            otherwise ->
-                Html.button
-                    [ Html.Attributes.id "start-button-inactive" ]
-                    [ Html.text "Please wait" ]
-          )
-        , Html.p [ Html.Attributes.id "updates-p" ]
-            [ Html.span [ Html.Attributes.id "update-text" ] [ Html.text "Updates: " ]
-            , Html.input
-                [ Html.Attributes.id "updateNumber"
-                , Html.Attributes.value model.updates
-                , Html.Events.onInput ChangeUpdates
+titleAndCommentsView : Model -> Html Msg
+titleAndCommentsView model =
+    Html.div [ Html.Attributes.id "Place-Experiment-titleAndCommentsView" ]
+        [ Html.p []
+            [ Html.text "Title: "
+            , Html.input [ Html.Attributes.value model.title, Html.Events.onInput ChangeTitle ] []
+            ]
+        , Html.p []
+            [ Html.text "Comments: "
+            , Html.textarea
+                [ Html.Attributes.id "commentsBox"
+                , Html.Attributes.rows 3
+                , Html.Attributes.value model.comments
+                , Html.Events.onInput ChangeComments
                 ]
                 []
             ]
         ]
-            ++ (case String.toInt model.updates of
-                    Ok _ ->
-                        []
-
-                    Err error_msg ->
-                        [ Html.br [] [], Html.span [ Html.Attributes.class "error-text" ] [ Html.text error_msg ] ]
-               )
 
 
 statusView : Model -> Html msg
@@ -217,25 +224,6 @@ statusView model =
 
             otherwise ->
                 [ Html.text <| toString model.status ]
-
-
-inputsView : Model -> Html Msg
-inputsView model =
-    Html.p []
-        [ Html.text "Title: "
-        , Html.input [ Html.Attributes.value model.title, Html.Events.onInput ChangeTitle ] []
-        , Html.br [] []
-        , Html.text "Comments:"
-        , Html.br [] []
-        , Html.textarea
-            [ Html.Attributes.id "commentsBox"
-            , Html.Attributes.rows 3
-            , Html.Attributes.value model.comments
-            , Html.Events.onInput ChangeComments
-            ]
-            []
-        , Html.br [] []
-        ]
 
 
 liveplot : Model -> Html Msg
@@ -366,9 +354,6 @@ experimentShowData model =
 
         numHeadings =
             List.length allHeadings
-
-        updates =
-            intDefault "1" model.updates
     in
         [ Html.h2 [] [ Html.text "NumPy data array layout" ]
         , Html.table [ Html.Attributes.id "data-table" ] <|
@@ -378,7 +363,7 @@ experimentShowData model =
                     :: allHeadings
                 )
             ]
-                ++ (case updates of
+                ++ (case model.updates of
                         1 ->
                             [ Html.tr []
                                 (Html.td [] [ Html.text "0" ]
@@ -471,11 +456,11 @@ experimentShowData model =
                                         )
                                 )
                             , Html.tr []
-                                (Html.td [] [ Html.text (toString (updates - 2)) ]
+                                (Html.td [] [ Html.text (toString (model.updates - 2)) ]
                                     :: List.repeat (numHeadings + 1) (Html.td [] [])
                                 )
                             , Html.tr []
-                                (Html.td [] [ Html.text (toString (updates - 1)) ]
+                                (Html.td [] [ Html.text (toString (model.updates - 1)) ]
                                     :: List.repeat (numHeadings + 1) (Html.td [] [])
                                 )
                             ]
@@ -487,7 +472,7 @@ encode : Model -> Json.Encode.Value
 encode model =
     Json.Encode.object
         [ ( "status", Json.Encode.string <| toString model.status )
-        , ( "updates", Json.Encode.int <| intDefault "1" model.updates )
+        , ( "updates", Json.Encode.int model.updates )
         , ( "plugins", Json.Encode.list <| List.map Plugin.encode model.plugins )
         , ( "title", Json.Encode.string model.comments )
         , ( "comments", Json.Encode.string model.comments )
@@ -499,7 +484,7 @@ decode =
     Json.Decode.map7
         Model
         (Json.Decode.field "status" Status.decode)
-        (Json.Decode.field "updates" Json.Decode.string)
+        (Json.Decode.field "updates" Json.Decode.int)
         (Json.Decode.field "plugins" (Json.Decode.list Plugin.decode))
         (Json.Decode.field "title" Json.Decode.string)
         (Json.Decode.field "comments" Json.Decode.string)
